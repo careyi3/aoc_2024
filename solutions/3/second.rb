@@ -4,7 +4,7 @@ module Day3
   module Part2
     def self.run(path, _)
       memory = FileReader.read_file(path)
-      ops = memory.scan(/(?=(mul\(\d{1,3},\d{1,3}\)|don't\(\)|do\(\)))/).flatten
+      ops = memory.scan(/mul\(\d{1,3},\d{1,3}\)|don't\(\)|do\(\)/)
       sum = 0
       enabled = true
       ops.each do |op|
@@ -15,7 +15,7 @@ module Day3
 
         next unless enabled
 
-        l, r = op.scan(/\d{1,3}/).flatten.map(&:to_i)
+        l, r = op.scan(/\d{1,3}/).map(&:to_i)
         sum += (l * r)
       end
       sum
