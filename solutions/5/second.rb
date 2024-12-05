@@ -25,42 +25,23 @@ module Day5
         end
       end
 
-      valid = []
-      invalid = []
+      sorted_invalids = []
       updates.each do |update|
-        temp = update.clone
-        is_valid = true
-        update.reverse.each do |num|
-          next if rules[num].nil?
-
-          temp.pop
-          must_be_before = rules[num]
-          next unless must_be_before != (must_be_before - temp)
-
-          invalid << update
-          is_valid = false
-          break
-        end
-        valid << update if is_valid
+        sorted = update.sort { |a, b| sort_by_rules(a, b, rules) }
+        sorted_invalids << sorted if sorted.reverse != update
       end
 
-      sorted = []
-      invalid.each do |iv|
-        sorted <<
-          iv.sort do |a, b|
-            if rules[a].nil?
-              0
-            else
-              if rules[a].include?(b)
-                1
-              else
-                -1
-              end
-            end
-          end
-      end
+      sorted_invalids.map { |x| x[x.count / 2] }.sum
+    end
 
-      sorted.map { |x| x[x.count / 2] }.sum
+    def self.sort_by_rules(a, b, rules)
+      if rules[a].nil?
+        0
+      elsif rules[a].include?(b)
+        1
+      else
+        -1
+      end
     end
   end
 end

@@ -27,22 +27,21 @@ module Day5
 
       valid = []
       updates.each do |update|
-        temp = update.clone
-        is_valid = true
-        update.reverse.each do |num|
-          next if rules[num].nil?
-
-          temp.pop
-          must_be_before = rules[num]
-          if must_be_before != (must_be_before - temp)
-            is_valid = false
-            break
-          end
-        end
-        valid << update if is_valid
+        sorted = update.sort { |a, b| sort_by_rules(a, b, rules) }
+        valid << update if sorted.reverse == update
       end
 
       valid.map { |x| x[x.count / 2] }.sum
+    end
+
+    def self.sort_by_rules(a, b, rules)
+      if rules[a].nil?
+        0
+      elsif rules[a].include?(b)
+        1
+      else
+        -1
+      end
     end
   end
 end
