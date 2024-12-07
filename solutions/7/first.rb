@@ -4,7 +4,6 @@ module Day7
   module Part1
     def self.run(path, _)
       tests = []
-      ops_lookup = {}
       FileReader.for_each_line(path) do |line|
         test_val, inputs = line.split(':')
         tests << {
@@ -15,32 +14,23 @@ module Day7
 
       valids = []
       tests.each do |test|
-        ops_lookup[test[:inputs].length - 1] = operations(test[:inputs].length - 1) if ops_lookup[test[:inputs].length - 1].nil?
-        ops_lookup[test[:inputs].length - 1].each do |ops|
-          res = calculate(test[:inputs], ops)
-          if res == test[:value]
-            valids << res
-            break
-          end
-        end
+        valids << test[:value] if test[:value] == calc(test[:value], test[:inputs], -1)
       end
       valids.sum
     end
 
-    def self.calculate(inputs, ops)
-      res = 0
-      inputs.each_with_index do |val, idx|
-        if idx.zero?
-          res = val
-          next
-        end
-        res = eval("#{res} #{ops[idx - 1]} #{val}")
-      end
-      res
-    end
+    def self.calc(test_val, inputs, value)
+      return value if inputs.length.zero?
 
-    def self.operations(n)
-      ['+', '*'].repeated_permutation(n).to_a
+      value = inputs.shift if value == -1
+      new_val = inputs.shift
+      res1 = calc(test_val, inputs.clone, value + new_val)
+      res2 = calc(test_val, inputs.clone, value * new_val)
+
+      return res1 if res1 == test_val
+      return res2 if res2 == test_val
+
+      0
     end
   end
 end
