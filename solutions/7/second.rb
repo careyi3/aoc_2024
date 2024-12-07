@@ -20,7 +20,7 @@ module Day7
     end
 
     def self.calc(test_val, inputs, value)
-      return value if inputs.length.zero?
+      return value if inputs.length.zero? || value > test_val
 
       value = inputs.shift if value == -1
       new_val = inputs.shift
