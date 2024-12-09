@@ -19,17 +19,52 @@ module Day9
         block_id += 1 if (idx % 2).zero?
       end
 
+      indexes = {}
       map.each_with_index do |val, idx|
-        next unless val == '.'
+        next if val == '.'
 
-        new_block = map.pop
-        new_block = map.pop while new_block == '.'
-        map[idx] = new_block
+        if indexes[val].nil?
+          indexes[val] = [idx]
+        else
+          indexes[val] << idx
+        end
+      end
+
+      (block_id - 1).downto(0) do |id|
+        instances = indexes[id]
+        instances.each do |idx|
+          map[idx] = '.'
+        end
+
+        count_blank = 0
+        map.each_with_index do |val, idx|
+          if val == '.'
+            count_blank += 1
+          else
+            count_blank = 0
+          end
+
+          if idx == instances.first
+            instances.each do |i|
+              map[i] = id
+            end
+            break
+          end
+
+          next unless count_blank == instances.length
+
+          instances.length.times do |i|
+            map[idx - i] = id
+          end
+          break
+        end
       end
 
       checksum = 0
-      map.each_with_index do |block_id, idx|
-        checksum += (block_id * idx)
+      map.each_with_index do |id, idx|
+        next if id == '.'
+
+        checksum += (id * idx)
       end
       checksum
     end
