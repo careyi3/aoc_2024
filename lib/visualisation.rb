@@ -3,6 +3,32 @@
 require('colorized_string')
 
 module Visualisation
+  def self.print_map(map, centre_x: 20, centre_y: 20, x_dim: 40, y_dim: 40, sleep: 0.01, spacer: ' ', colour_char: nil, colour: nil, flip: false, empty_char: '.', no_clear: false, character_colours: nil)
+    system('clear') unless no_clear
+    x_origin = centre_x - (x_dim / 2) >= 0 ? centre_x - (x_dim / 2) : 0
+    y_origin = centre_y - (y_dim / 2) >= 0 ? centre_y - (y_dim / 2) : 0
+    if flip
+      (x_origin + x_dim - 1).downto(x_origin).each do |x|
+        (y_origin..y_origin + y_dim - 1).each do |y|
+          val = map["#{x}:#{y}"]
+          val ||= empty_char
+          print_and_flush("#{val}#{spacer}", colour_char, colour, character_colours)
+        end
+        puts ''.black
+      end
+    else
+      (x_origin..x_origin + x_dim - 1).each do |x|
+        (y_origin..y_origin + y_dim - 1).each do |y|
+          val = map["#{y}:#{x}"]
+          val ||= empty_char
+          print_and_flush("#{val}#{spacer}", colour_char, colour, character_colours)
+        end
+        puts ''.black
+      end
+    end
+    sleep(sleep)
+  end
+
   def self.print_grid(grid, centre_x: 20, centre_y: 20, x_dim: 40, y_dim: 40, sleep: 0.01, spacer: ' ', colour_char: nil, colour: nil, flip: false, empty_char: '.', no_clear: false, character_colours: nil)
     system('clear') unless no_clear
     x_origin = centre_x - (x_dim / 2) >= 0 ? centre_x - (x_dim / 2) : 0
