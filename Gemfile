@@ -3,6 +3,7 @@
 source('https://rubygems.org')
 
 source('https://rubygems.org') do
+  gem('algorithms')
   gem('benchmark', '~> 0.2.0')
   gem('bundler', '~> 2.3.26')
   gem('colorize', '~> 0.8.1')

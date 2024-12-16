@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
+require 'algorithms'
+
 module Day16
   module Part1
+    include Containers
+
     def self.run(path, _)
+      heap = MinHeap.new
       unvisited = {}
       visited = {}
       finish = []
@@ -14,17 +19,22 @@ module Day16
           4.times do |i|
             unvisited["#{x}:#{y}:#{i}"] = 1_000_000_000
           end
-          unvisited["#{x}:#{y}:2"] = 0 if char == 'S'
+          if char == 'S'
+            unvisited["#{x}:#{y}:2"] = 0
+            heap.push(0, "#{x}:#{y}:2")
+          end
           finish = [x, y] if char == 'E'
         end
       end
 
-      while unvisited.count > 0
-        min_coord, min_val = unvisited.min_by { |_, val| val }
-        break if min_val == 1_000_000_000
-
+      loop do
+        min_coord = heap.pop
         x, y, dir = min_coord.split(':').map(&:to_i)
-        walk(unvisited, visited, dirs, dir, x, y)
+        key = "#{x}:#{y}:#{dir}"
+        next if unvisited[key].nil?
+
+        check(heap, unvisited, visited, dirs, dir, x, y)
+        break if finish == [x, y]
       end
 
       scores = []
@@ -34,7 +44,7 @@ module Day16
       scores.compact.min
     end
 
-    def self.walk(unvisited, visited, dirs, dir, x, y)
+    def self.check(heap, unvisited, visited, dirs, dir, x, y)
       key = "#{x}:#{y}:#{dir}"
       visited[key] = unvisited[key]
 
@@ -48,7 +58,10 @@ module Day16
         cost += 1000 if ([0, 2].include?(d) && [1, 3].include?(dir)) || ([1, 3].include?(d) && [0, 2].include?(dir))
         cost += 2000 if (d == 0 && dir == 2) || (d == 1 && dir == 3) || (d == 2 && dir == 0) || (d == 3 && dir == 1)
 
-        unvisited[next_key] = (unvisited[key] + cost) if (unvisited[key] + cost) < unvisited[next_key]
+        if (unvisited[key] + cost) < unvisited[next_key]
+          unvisited[next_key] = (unvisited[key] + cost)
+          heap.push((unvisited[key] + cost), next_key)
+        end
       end
       unvisited.delete(key)
       nil
