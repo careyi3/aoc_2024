@@ -17,7 +17,7 @@ module Day19
         end
       end
       combos = 0
-      towels.each_with_index do |towel, _i|
+      towels.each do |towel|
         combos += find(stripes, towel, {})
       end
       combos
